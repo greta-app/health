@@ -26,4 +26,3 @@ COPY --from=builder /etc/passwd /etc/passwd
 COPY --from=builder /etc/group /etc/group
 
 USER 1000
-COPY scripts /greta/scripts
