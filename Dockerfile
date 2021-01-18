@@ -5,7 +5,7 @@ FROM golang:1.15 AS builder
 
 RUN mkdir -p /greta
 
-RUN groupadd -g 1000 greta && useradd -r -s /bin/false -u 1000 -g greta greta
+RUN groupadd -g 1000 ec2-user && useradd -r -s /bin/false -u 1000 -g ec2-user ec2-user
 
 WORKDIR /greta
 COPY . .
@@ -25,4 +25,4 @@ COPY --from=builder /greta/health /greta/health
 COPY --from=builder /etc/passwd /etc/passwd
 COPY --from=builder /etc/group /etc/group
 
-USER 1000
+USER ec2-user
