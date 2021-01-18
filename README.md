@@ -35,7 +35,9 @@ Conceptually having health logic inside the PHP application itself is wrong beca
 
     docker run -it --rm -v $(pwd)/test.json:/home/ec2-user/greta/healthtests/test.json -p 127.0.0.1:8023:8023/tcp gretaapp/health /home/ec2-user/greta/health -port 8023 -scriptPath /home/ec2-user/greta/healthtests/test.json
 
+
 Here is some explanation:
+
 
     docker run -it --rm : starts a docker container interactively in the current terminal and removes it after exit
      -v $(pwd)/test.json:/home/ec2-user/greta/healthtests/test.json : mounts test file from the local folder $(pwd)/test.json to the container folder at path /home/ec2-user/greta/healthtests/test.json
@@ -48,7 +50,9 @@ Here is some explanation:
 
 - you should see an output like:
 
+
 `2021/01/18 12:09:06 start process on port :8023, for the script path /home/ec2-user/greta/healthtests/test.json`
+
 
 - open another terminal session and run your health test:
 
@@ -61,10 +65,12 @@ Here is some explanation:
 
     Tests success
 
+
 - to see the execution details by running following command:
 
 
     docker logs $(docker ps --format {{.ID}} --filter "ancestor=gretaapp/health")
+
 
 - you should see an output like:
 
@@ -95,6 +101,7 @@ Test file format is JSON. It defines a list of tests as following:
       }
     ]
 
+
 ### url
 Defines the url to call in the test.
 
@@ -109,7 +116,6 @@ The text that should be found in the response body of a corresponding url. If no
 
 ### headers
 Key value arguments which will be used as headers to call `url`. 
-
 
 The test from above will do the following:
 
