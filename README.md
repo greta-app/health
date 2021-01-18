@@ -34,55 +34,61 @@ Conceptually having health logic inside the PHP application itself is wrong beca
 - pull and run the docker image with the health server at the defined port:
 
 
-    docker run -it --rm -v $(pwd)/test.json:/home/ec2-user/greta/healthtests/test.json -p 127.0.0.1:8023:8023/tcp gretaapp/health /home/ec2-user/greta/health -port 8023 -scriptPath /home/ec2-user/greta/healthtests/test.json
+        docker run -it --rm -v $(pwd)/test.json:/home/ec2-user/greta/healthtests/test.json -p 127.0.0.1:8023:8023/tcp gretaapp/health /home/ec2-user/greta/health -port 8023 -scriptPath /home/ec2-user/greta/healthtests/test.json
 
 
 Here is some explanation:
 
 
     docker run -it --rm : starts a docker container interactively in the current terminal and removes it after exit
+     
      -v $(pwd)/test.json:/home/ec2-user/greta/healthtests/test.json : mounts test file from the local folder $(pwd)/test.json to the container folder at path /home/ec2-user/greta/healthtests/test.json
+    
     -p 127.0.0.1:8023:8023/tcp : exposes port 8023 on the host machine and binds it to the port 8023 inside the docker container
+   
     gretaapp/health : docker image path - see https://hub.docker.com/r/gretaapp/health
+    
     /home/ec2-user/greta/health : the binary location
+    
     -port 8023 : port where to run the health checker inside the docker container
+    
     -scriptPath /home/ec2-user/greta/healthtests/test.json : path to the testing script
     
 
 - you should see an output like:
 
 
-`2021/01/18 12:09:06 start process on port :8023, for the script path /home/ec2-user/greta/healthtests/test.json`
+        2021/01/18 12:09:06 start process on port :8023, for the script path /home/ec2-user/greta/healthtests/test.json`
 
 
 - open another terminal session and run your health test:
 
 
-    curl localhost:8023
+        curl localhost:8023
 
 
 - you should see something like:
 
 
-    Tests success
+        Tests success
 
 
 - to see the execution details by running following command:
 
 
-    docker logs $(docker ps --format {{.ID}} --filter "ancestor=gretaapp/health")
+        docker logs $(docker ps --format {{.ID}} --filter "ancestor=gretaapp/health")
 
 
 - you should see an output like:
 
     
-    2021/01/18 12:09:06 start process on port :8023, for the script path /home/ec2-user/greta/healthtests/test.json
-    2021/01/18 12:11:31 will execute 1 tests
-    2021/01/18 12:11:31 Calling server with input parameters: {Url:https://status.aws.amazon.com/ ExpectedResponseCodeRange:199-299 Method:GET Contains: Headers:map[]}
-    2021/01/18 12:11:33 Got response status code: '200'
-    2021/01/18 12:11:33 test {Url:https://status.aws.amazon.com/ ExpectedResponseCodeRange:199-299 Method:GET Contains: Headers:map[]} execution success
-    2021/01/18 12:11:33 took: 1.8651697s
-    2021/01/18 12:11:33 Tests success
+        2021/01/18 12:09:06 start process on port :8023, for the script path /home/ec2-user/greta/healthtests/test.json
+        2021/01/18 12:11:31 will execute 1 tests
+        2021/01/18 12:11:31 Calling server with input parameters: {Url:https://status.aws.amazon.com/ ExpectedResponseCodeRange:199-299 Method:GET Contains: Headers:map[]}
+        2021/01/18 12:11:33 Got response status code: '200'
+        2021/01/18 12:11:33 test {Url:https://status.aws.amazon.com/ ExpectedResponseCodeRange:199-299 Method:GET Contains: Headers:map[]} execution success
+        2021/01/18 12:11:33 took: 1.8651697s
+        2021/01/18 12:11:33 Tests success
   
     
 ## Test file format
@@ -90,17 +96,17 @@ Here is some explanation:
 Test file format is JSON. It defines a list of tests as following:
 
     
-    [
-      {
-        "url": "http://127.0.0.1:8080",
-        "code_range": "199-299",
-        "method": "GET",
-        "contains": "Service is operating normally",
-        "headers": {
-          "Host": "mydomain.com"
-        }
-      }
-    ]
+        [
+          {
+            "url": "http://127.0.0.1:8080",
+            "code_range": "199-299",
+            "method": "GET",
+            "contains": "Service is operating normally",
+            "headers": {
+              "Host": "mydomain.com"
+            }
+          }
+        ]
 
 
 ### url
