@@ -20,9 +20,12 @@ RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -installsuffix cgo \
 
 FROM alpine:latest
 RUN apk add curl bash
-WORKDIR /greta
-COPY --from=builder /greta/health /greta/health
+WORKDIR /home/ec2-user/greta
+COPY --from=builder /greta/health /home/ec2-user/greta/health
 COPY --from=builder /etc/passwd /etc/passwd
 COPY --from=builder /etc/group /etc/group
+
+RUN mkdir /home/ec2-user/greta/healthtests && chown -R ec2-user:ec2-user /home/ec2-user/greta/
+VOLUME ["/home/ec2-user/greta/healthtests"]
 
 USER ec2-user
