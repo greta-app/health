@@ -56,7 +56,7 @@ func main() {
 
 	http.HandleFunc("/", handle)
 	localAddr := fmt.Sprintf(":%d", *port)
-	log.Printf("start listening on %s\n", localAddr)
+	log.Printf("start process on port %s, for the script path %s \n", localAddr, scriptPath)
 	err = http.ListenAndServe(localAddr, nil)
 	if err != nil {
 		log.Fatal(err)
