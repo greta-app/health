@@ -77,7 +77,9 @@ func handle(w http.ResponseWriter, req *http.Request) {
 	for _, test := range tests {
 		start := time.Now()
 		err = executeTest(test)
-
+		if err != nil {
+			log.Printf("test's failed: %v", err)
+		}
 		log.Printf("took: %v", time.Since(start))
 
 		if err != nil {
@@ -90,7 +92,7 @@ func handle(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	log.Println("tests execution success")
+	handleSuccess(w)
 }
 
 func executeTest(t test) error {
@@ -108,7 +110,7 @@ func executeTest(t test) error {
 		req.Header.Add(key, value)
 	}
 
-	connectionTimeout := 5 * time.Second
+	connectionTimeout := 10 * time.Second
 	transport := &http.Transport{
 		DisableKeepAlives:     true,
 		TLSClientConfig:       &tls.Config{InsecureSkipVerify: true},
@@ -172,10 +174,22 @@ func executeTest(t test) error {
 func handleErr(w http.ResponseWriter, err error) {
 	w.WriteHeader(500)
 
-	errTxt := fmt.Sprintf("[ERROR] Test faiure: %v", err)
+	errTxt := fmt.Sprintf("Tests faiure: %v", err)
 	log.Println(errTxt)
 
 	_, err = w.Write([]byte(errTxt))
+	if err != nil {
+		log.Println(err)
+	}
+}
+
+func handleSuccess(w http.ResponseWriter) {
+	w.WriteHeader(200)
+
+	successTxt :="Tests success"
+	log.Println(successTxt)
+
+	_, err := w.Write([]byte(successTxt))
 	if err != nil {
 		log.Println(err)
 	}
