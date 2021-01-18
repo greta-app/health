@@ -35,13 +35,15 @@ Conceptually having health logic inside the PHP application itself is wrong beca
 
     docker run -it --rm -v $(pwd)/test.json:/home/ec2-user/greta/healthtests/test.json -p 127.0.0.1:8023:8023/tcp gretaapp/health /home/ec2-user/greta/health -port 8023 -scriptPath /home/ec2-user/greta/healthtests/test.json
 
-    # `docker run -it --rm` : starts a docker container interactively in the current terminal and removes it after exit
-    # -v $(pwd)/test.json:/home/ec2-user/greta/healthtests/test.json : mounts test file from the local folder $(pwd)/test.json to the container folder at path /home/ec2-user/greta/healthtests/test.json
-    # -p 127.0.0.1:8023:8023/tcp : exposes port 8023 on the host machine and binds it to the port 8023 inside the docker container
-    # gretaapp/health : docker image path - see https://hub.docker.com/r/gretaapp/health
-    # /home/ec2-user/greta/health : the binary location
-    # -port 8023 : port where to run the health checker inside the docker container
-    # -scriptPath /home/ec2-user/greta/healthtests/test.json : path to the testing script
+Here is some explanation:
+
+    docker run -it --rm : starts a docker container interactively in the current terminal and removes it after exit
+     -v $(pwd)/test.json:/home/ec2-user/greta/healthtests/test.json : mounts test file from the local folder $(pwd)/test.json to the container folder at path /home/ec2-user/greta/healthtests/test.json
+    -p 127.0.0.1:8023:8023/tcp : exposes port 8023 on the host machine and binds it to the port 8023 inside the docker container
+    gretaapp/health : docker image path - see https://hub.docker.com/r/gretaapp/health
+    /home/ec2-user/greta/health : the binary location
+    -port 8023 : port where to run the health checker inside the docker container
+    -scriptPath /home/ec2-user/greta/healthtests/test.json : path to the testing script
     
 
 - you should see an output like:
