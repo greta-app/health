@@ -21,7 +21,7 @@ Conceptually having health logic inside the PHP application itself is wrong beca
 - create a script file with tests. Use `example.json` for inspiration or just the `hello world` variant below:
 
 
-    # test.json
+    #test.json
     [
       {
         "url": "https://status.aws.amazon.com/",
@@ -29,6 +29,7 @@ Conceptually having health logic inside the PHP application itself is wrong beca
         "method": "GET"
       }
     ]
+
 
 - pull and run the docker image with the health server at the defined port:
 
