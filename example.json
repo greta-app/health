@@ -1,0 +1,11 @@
+[
+  {
+    "url": "http://127.0.0.1:8080",
+    "code_range": "199-299",
+    "method": "GET",
+    "contains": "Service is operating normally",
+    "headers": {
+      "Host": "mydomain.com"
+    }
+  }
+]
