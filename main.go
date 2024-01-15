@@ -46,7 +46,7 @@ func main() {
 	scriptPath = *scriptPathPtr
 
 	if _, err := os.Stat(scriptPath); os.IsNotExist(err) {
-		log.Fatalf("file does not exist: %s", scriptPath)
+		log.Fatalf("file does not exist: %s\n", scriptPath)
 	}
 
 	_, err := parseScript()
@@ -78,9 +78,9 @@ func handle(w http.ResponseWriter, req *http.Request) {
 		start := time.Now()
 		err = executeTest(test)
 		if err != nil {
-			log.Printf("test's failed: %v", err)
+			log.Printf("test's failed: %v\n", err)
 		}
-		log.Printf("took: %v", time.Since(start))
+		log.Printf("took: %v\n", time.Since(start))
 
 		if err != nil {
 			errs = append(errs, err.Error())
@@ -123,7 +123,7 @@ func executeTest(t test) error {
 		dump, _ := httputil.DumpRequest(req, true)
 		log.Printf("Input context: %+v, raw request: %s\n", t, string(dump))
 	} else {
-		log.Printf("Calling server with input parameters: %+v", t)
+		log.Printf("Calling server with input parameters: %+v\n", t)
 	}
 
 	resp, err := client.Do(req)
@@ -144,7 +144,7 @@ func executeTest(t test) error {
 		}
 	}()
 
-	respBody, err := ioutil.ReadAll(resp.Body)
+	respBody, err := io.ReadAll(resp.Body)
 	if err == io.EOF {
 		log.Printf("Empty body in the response, status: %d\n", resp.StatusCode)
 	}
@@ -154,12 +154,15 @@ func executeTest(t test) error {
 
 	log.Printf("Got response status code: '%d'\n", resp.StatusCode)
 
-	if resp.StatusCode < minRespCode && resp.StatusCode > maxRespCode {
+	checks := []string{}
+	if resp.StatusCode < minRespCode || resp.StatusCode > maxRespCode {
 		return fmt.Errorf("test failed: the response code %d is not in expected range: %s, resp body: %s", resp.StatusCode, t.ExpectedResponseCodeRange, string(respBody))
 	}
 
+	checks = append(checks, fmt.Sprintf("Statis cude %d is between %d and %d", resp.StatusCode, minRespCode, maxRespCode))
+
 	if t.Contains == "" {
-		log.Printf("test %+v execution success\n", t)
+		log.Printf("test %+v execution success: %s\n", t, strings.Join(checks, "; "))
 		return nil
 	}
 
@@ -167,7 +170,10 @@ func executeTest(t test) error {
 		return fmt.Errorf("test failed: could not find expected string '%s' in response body '%s'", t.Contains, string(respBody))
 	}
 
-	log.Printf("test %+v execution success\n", t)
+	checks = append(checks, fmt.Sprintf("Body contains %s", t.Contains))
+
+	log.Printf("test %+v execution success: %s\n", t, strings.Join(checks, "; "))
+
 	return nil
 }
 
@@ -186,7 +192,7 @@ func handleErr(w http.ResponseWriter, err error) {
 func handleSuccess(w http.ResponseWriter) {
 	w.WriteHeader(200)
 
-	successTxt :="Tests success"
+	successTxt := "Tests success"
 	log.Println(successTxt)
 
 	_, err := w.Write([]byte(successTxt))
