@@ -57,12 +57,12 @@ func main() {
 	http.HandleFunc("/", handle)
 	localAddr := fmt.Sprintf(":%d", *port)
 	log.Printf("start process on port %s, for the script path %s \n", localAddr, scriptPath)
+	isVerbose = *isVerbosePtr
 	err = http.ListenAndServe(localAddr, nil)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	isVerbose = *isVerbosePtr
 }
 
 func handle(w http.ResponseWriter, req *http.Request) {
@@ -107,7 +107,11 @@ func executeTest(t test) error {
 	}
 
 	for key, value := range t.Headers {
-		req.Header.Add(key, value)
+		if strings.ToLower(key) == "host" {
+			req.Host = value //due to https://github.com/golang/go/issues/7682
+			continue
+		}
+		req.Header.Set(key, value)
 	}
 
 	connectionTimeout := 10 * time.Second
@@ -117,7 +121,12 @@ func executeTest(t test) error {
 		ResponseHeaderTimeout: connectionTimeout,
 	}
 
-	client := http.Client{Transport: transport}
+	client := http.Client{
+		Transport: transport,
+		CheckRedirect: func(req *http.Request, via []*http.Request) error {
+			return http.ErrUseLastResponse
+		},
+	}
 
 	if isVerbose {
 		dump, _ := httputil.DumpRequest(req, true)
