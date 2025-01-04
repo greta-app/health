@@ -18,7 +18,7 @@ RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -installsuffix cgo \
 
 FROM alpine:latest
 RUN apk add curl bash
-RUN groupadd -g 1000 ec2-user && useradd -r -s /bin/false -u 1000 -g ec2-user ec2-user
+RUN addgroup -g 1000 -S ec2-user && adduser -S -D -u 1000 -G ec2-user ec2-user
 WORKDIR /home/ec2-user/greta
 COPY --from=builder /greta/health /home/ec2-user/greta/health
 
